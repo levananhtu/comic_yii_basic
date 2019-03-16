@@ -132,4 +132,40 @@ class Comic extends \yii\db\ActiveRecord
         }
         return $comics;
     }
+
+    public static function getComicDetailByGenreName($genreName, $offset=null, $limit=null)
+    {
+        $genreID = Genre::getGenreIdByGenreName($genreName);
+        if ($genreID == null) {
+            return null;
+        }
+        $comics = Genre::findOne($genreID)
+            ->getComics()
+            ->select(["ComicID", "ComicName", "Description", "Thumbnail"])
+            ->offset($offset)
+            ->limit($limit)
+            ->asArray()
+            ->all();
+        if (empty($comics)) {
+            return null;
+        }
+        return self::getComicItem($comics);
+    }
+
+    private static function getComicItem($comics)
+    {
+        for ($i = 0; $i < count($comics); $i++) {
+            $comicId = $comics[$i]["ComicID"];
+            $genres = Comic::findOne($comicId)
+                ->getGenres()
+                ->select(["GenreName"])
+                ->asArray()
+                ->all();
+            $comics[$i]["GenreCount"] = count($genres);
+            $comics[$i]["Genres"] = $genres;
+            unset($comics[$i]["ComicID"]);
+        }
+        return $comics;
+
+    }
 }

@@ -54,4 +54,15 @@ class Genre extends \yii\db\ActiveRecord
         return $this->hasMany(ComicGenre::className(), ["GenreID" => "GenreID"]);
     }
 
+    public static function getGenreIdByGenreName($genreName)
+    {
+        $genreId = Genre::find()
+            ->where(["GenreName" => $genreName])
+            ->asArray()
+            ->one();
+        if (empty($genreId)) {
+            return null;
+        }
+        return $genreId;
+    }
 }
