@@ -104,4 +104,32 @@ class Comic extends \yii\db\ActiveRecord
         return $this->hasMany(ComicAuthor::className(), ["ComicID" => "ComicID"]);
     }
 
+    public static function getComicDetailByAuthorName($authorName)
+    {
+        $authorID = Author::getAuthorIdByAuthorName($authorName);
+        if ($authorID == null) {
+            return null;
+        }
+        $comics = Author::findOne($authorID)
+            ->getComics()
+            ->select(["ComicID", "ComicName", "Description", "Thumbnail"])
+            ->asArray()
+            ->all();
+        if (empty($comics)) {
+            return null;
+        }
+
+        for ($i = 0; $i < count($comics); $i++) {
+            $comicId = $comics[$i]["ComicID"];
+            $genres = Comic::findOne($comicId)
+                ->getGenres()
+                ->select(["GenreName"])
+                ->asArray()
+                ->all();
+            $comics[$i]["GenreCount"] = count($genres);
+            $comics[$i]["Genres"] = $genres;
+            unset($comics[$i]["ComicID"]);
+        }
+        return $comics;
+    }
 }
