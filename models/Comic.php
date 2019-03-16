@@ -152,6 +152,25 @@ class Comic extends \yii\db\ActiveRecord
         return self::getComicItem($comics);
     }
 
+    public static function getComicDetailByTranslatorName($translatorName, $offset=null, $limit=null)
+    {
+        $translatorID = Translator::getTranslatorIdByTranslatorName($translatorName);
+        if ($translatorID == null) {
+            return null;
+        }
+        $comics = Translator::findOne($translatorID)
+            ->getComics()
+            ->select(["ComicID", "ComicName", "Description", "Thumbnail"])
+            ->offset($offset)
+            ->limit($limit)
+            ->asArray()
+            ->all();
+        if (empty($comics)) {
+            return null;
+        }
+        return self::getComicItem($comics);
+    }
+
     private static function getComicItem($comics)
     {
         for ($i = 0; $i < count($comics); $i++) {

@@ -54,4 +54,16 @@ class Translator extends \yii\db\ActiveRecord
         return $this->hasMany(ComicTranslator::className(), ["TranslatorID" => "TranslatorID"]);
     }
 
+    public static function getTranslatorIdByTranslatorName($translatorName)
+    {
+        $translatorId = Translator::find()
+            ->where(["TranslatorName" => $translatorName])
+            ->asArray()
+            ->one();
+        if (empty($translatorId)) {
+            return null;
+        }
+        return $translatorId;
+
+    }
 }
