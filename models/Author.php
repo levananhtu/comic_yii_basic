@@ -54,4 +54,15 @@ class Author extends \yii\db\ActiveRecord
         return $this->hasMany(ComicAuthor::className(), ["AuthorID" => "AuthorID"]);
     }
 
+    public static function getAuthorIdByAuthorName($authorName)
+    {
+        $authorId = Author::find()
+            ->where(["AuthorName" => $authorName])
+            ->asArray()
+            ->one();
+        if (empty($authorId)) {
+            return null;
+        }
+        return $authorId;
+    }
 }
