@@ -133,7 +133,7 @@ class Comic extends \yii\db\ActiveRecord
         return $comics;
     }
 
-    public static function getComicDetailByGenreName($genreName, $offset=null, $limit=null)
+    public static function getComicDetailByGenreName($genreName, $offset = null, $limit = null)
     {
         $genreID = Genre::getGenreIdByGenreName($genreName);
         if ($genreID == null) {
@@ -152,7 +152,7 @@ class Comic extends \yii\db\ActiveRecord
         return self::getComicItem($comics);
     }
 
-    public static function getComicDetailByTranslatorName($translatorName, $offset=null, $limit=null)
+    public static function getComicDetailByTranslatorName($translatorName, $offset = null, $limit = null)
     {
         $translatorID = Translator::getTranslatorIdByTranslatorName($translatorName);
         if ($translatorID == null) {
@@ -186,5 +186,14 @@ class Comic extends \yii\db\ActiveRecord
         }
         return $comics;
 
+    }
+
+    public static function getComicByComicName($comicName, $columns = null)
+    {
+        return Comic::find()
+            ->select($columns)
+            ->where(["ComicName" => $comicName])
+            ->asArray()
+            ->one();
     }
 }
