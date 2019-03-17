@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "comic".
@@ -104,6 +105,11 @@ class Comic extends \yii\db\ActiveRecord
         return $this->hasMany(ComicAuthor::className(), ["ComicID" => "ComicID"]);
     }
 
+    public function getFinishStatus()
+    {
+        return $this->hasMany(FinishStatus::className(), ["FinishStatusID" => "FinishStatusID"]);
+    }
+
     public static function getComicDetailByAuthorName($authorName)
     {
         $authorID = Author::getAuthorIdByAuthorName($authorName);
@@ -195,5 +201,52 @@ class Comic extends \yii\db\ActiveRecord
             ->where(["ComicName" => $comicName])
             ->asArray()
             ->one();
+    }
+
+    public static function getComicDetail($comicName)
+    {
+        $comic = Comic::getComicByComicName($comicName);
+        if ($comic == null) {
+            return null;
+        }
+        $rawComic = Comic::findOne($comic["ComicID"]);
+        $sourceName = $rawComic
+            ->getSource()
+            ->select(["SourceName"])
+            ->asArray()
+            ->one();
+        $finishStatusName = $rawComic
+            ->getFinishStatus()
+            ->select(["FinishStatusName"])
+            ->asArray()
+            ->one();
+        $authorsName = $rawComic
+            ->getAuthors()
+            ->select(["AuthorName"])
+            ->asArray()
+            ->all();
+        $translatorsName = $rawComic
+            ->getTranslators()
+            ->select(["TranslatorName"])
+            ->asArray()
+            ->all();
+        $genresName = $rawComic
+            ->getGenres()
+            ->select(["GenreName"])
+            ->asArray()
+            ->all();
+        $chaptersName = $rawComic
+            ->getChapters()
+            ->select(["ChapterName", "SubmitDate"])
+            ->asArray()
+            ->all();
+        $comic = ArrayHelper::merge($comic, $sourceName,
+            $finishStatusName,
+            ["Authors" => $authorsName],
+            ["Translators" => $translatorsName],
+            ["Genres" => $genresName],
+            ["Chapters" => $chaptersName]);
+        unset($comic["SourceID"], $comic["FinishStatusID"], $comic["ComicID"]);
+        return $comic;
     }
 }
