@@ -46,4 +46,14 @@ class Page extends \yii\db\ActiveRecord
             'PageURL' => 'Page Url',
         ];
     }
+
+    public static function getPageByChapterId($chapterId, $columns = null)
+    {
+        return Page::find()
+            ->select($columns)
+            ->where(["ChapterID" => $chapterId])
+            ->asArray()
+            ->all();
+
+    }
 }
