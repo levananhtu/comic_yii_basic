@@ -1068,7 +1068,17 @@ AppAsset::register($this);
     <!-- Sidebar chat end-->
     <div class="content-wrapper">
         <div class="container-fluid">
-            <?= $content ?>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-block">
+                            <div class="md-card-block">
+                                <?= $content ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
